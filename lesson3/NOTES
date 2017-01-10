@@ -1,0 +1,34 @@
+Why are statistical significance tests useful?
+  - they provide a formalized framework for comparing
+  and evaluating data
+  - they enable us to evaluate whether perceived
+  effects in our datasets reflect differences
+  accross the whole population
+
+Many tests might make assumptions about data's distribution.
+The common one is Normal or Gaussian distribution
+
+t-test
+------
+accept or reject a NULL hypothesis, that is, a statement
+we are trying to disprove by running our test
+
+formulas por t and v
+
+
+What if data is not normal?
+---------------------------
+Check if data is normal -> shapiro-wild test
+
+w, p = scipy.stats.shapiro (data)
+w -> shapiro-wild test statistic
+p ->p-value (like in t-test)
+
+Non-parametric test
+-------------------
+Tests do not assume data is normal:
+
+* mann-whitney U test: test null hypothesis that two populations are the same
+u, p = scipy.stats.mannwhitneyu(x,y)
+
+TODO: probar a generar distribucion y comparar con t-test y shapiro-wild test

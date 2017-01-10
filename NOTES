@@ -1,0 +1,6 @@
+Dealing with missing data:
+* listwise deletion: remove from the data the incomplete records
+* pairwise deletion: instead of removing the entire records, pairwise deletion simply do not take into account the missing data for the calculation where they are involved
+
+Imputation:
+* easy: just replace NaN by the mean of the rest of values
