@@ -1,6 +1,7 @@
 import pandas
 import pandasql
 import numpy
+import re
 
 FILENAME = 'world_population_series.csv'
 
@@ -33,9 +34,10 @@ def population_evolution(df):
   for key in df.keys():
     print key, numpy.array(df[key]).astype('int').sum()
 
-def population_growing(df, interval):    
-  first_year = 1967
-  last_year = 2016
+def population_growing(df, interval):
+  first_year = int(df.keys()[0].split(' ')[0])
+  last_year = int(df.keys()[-1].split(' ')[0])
+
   countries = {}
   for country in df.index:
     max_growing_data = {}
