@@ -4,8 +4,6 @@ import numpy
 
 FILENAME = 'world_population_series.csv'
 
-
-
 def wrangling(filename):
   df = pandas.read_csv(FILENAME, encoding='latin-1');  
 
@@ -23,6 +21,8 @@ def wrangling(filename):
   df = df[:-5]
 
   df.drop('World', inplace=True)
+  df.drop('European Union', inplace=True)
+  df.drop('Euro area', inplace=True)
 
   # maybe replace by the last one?
   df.replace('..',0, inplace=True)
@@ -33,9 +33,7 @@ def population_evolution(df):
   for key in df.keys():
     print key, numpy.array(df[key]).astype('int').sum()
 
-def population_growing(df):    
-  # most growing countries during 10 years
-  interval = 10
+def population_growing(df, interval):    
   first_year = 1967
   last_year = 2016
   countries = {}
@@ -49,7 +47,7 @@ def population_growing(df):
 
       if start_population == 0:
         continue;
-    
+
       grow = ((end_population - start_population) / start_population)*100;
 
       if grow > max_growing_data['grow']:
@@ -57,7 +55,7 @@ def population_growing(df):
         max_growing_data['grow'] = grow
         max_growing_data['start_population'] = start_population
         max_growing_data['end_population'] = end_population
-      
+
       countries[country] = max_growing_data
 
   growing_data = pandas.DataFrame(countries).transpose()
@@ -67,12 +65,10 @@ def population_growing(df):
 if __name__ == "__main__":
   df_population = wrangling(FILENAME)
   population_evolution(df_population)
-#  df_grow = population_growing(df_population)
+  df_grow = population_growing(df_population, 1)
   
-#  print df_grow[df_grow['start_population'] > 1000000].sort_values(['grow'], ascending=False)
+  print df_grow[df_grow['start_population'] > 1000000].sort_values(['grow'], ascending=False)
 
 
 
-# TODO: remove not classified, European Union, Euro area?
-
-
+# TODO: remove not classified
