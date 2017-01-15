@@ -1,12 +1,10 @@
 import pandas
-import pandasql
 import numpy
-import re
 
 FILENAME = 'world_population_series_217.csv'
 
 def wrangling(filename):
-  df = pandas.read_csv(FILENAME, encoding='latin-1');  
+  df = pandas.read_csv(filename, encoding='latin-1');  
 
   # set Country Name as index to make easier the lecture
   # of the data
