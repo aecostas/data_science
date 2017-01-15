@@ -11,10 +11,11 @@ The common one is Normal or Gaussian distribution
 t-test
 ------
 accept or reject a NULL hypothesis, that is, a statement
-we are trying to disprove by running our test
+we are trying to disprove by running our test. Examples:
+    - two samples come from the same population
+    - a sample is drawn from a probability distribution
 
 formulas por t and v
-
 
 What if data is not normal?
 ---------------------------
@@ -31,9 +32,10 @@ Tests do not assume data is normal:
 * mann-whitney U test: test null hypothesis that two populations are the same
 u, p = scipy.stats.mannwhitneyu(x,y)
 
-
-
 R^2 -> cómo de buena es el modelo
+
+Residuals -> diferencia entre los valores predichos por el modelo
+y los valores reales. Deben ser normales (http://www.itl.nist.gov/div898/handbook/pri/section2/pri24.htm)
 
 
 TODO: probar a generar distribucion y comparar con t-test y shapiro-wild test
