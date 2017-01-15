@@ -31,4 +31,11 @@ Tests do not assume data is normal:
 * mann-whitney U test: test null hypothesis that two populations are the same
 u, p = scipy.stats.mannwhitneyu(x,y)
 
+
+
+R^2 -> cómo de buena es el modelo
+
+
 TODO: probar a generar distribucion y comparar con t-test y shapiro-wild test
+
+

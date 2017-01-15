@@ -3,7 +3,7 @@ import pandasql
 import numpy
 import re
 
-FILENAME = 'world_population_series.csv'
+FILENAME = 'world_population_series_217.csv'
 
 def wrangling(filename):
   df = pandas.read_csv(FILENAME, encoding='latin-1');  
@@ -21,22 +21,23 @@ def wrangling(filename):
   df = df.drop(['Series Name', 'Series Code', 'Country Name', 'Country Code','2016 [YR2016]'], axis=1)
   df = df[:-5]
 
-  df.drop('World', inplace=True)
-  df.drop('European Union', inplace=True)
-  df.drop('Euro area', inplace=True)
+#  df.drop('World', inplace=True)
+#  df.drop('European Union', inplace=True)
+#  df.drop('Euro area', inplace=True)
 
   # maybe replace by the last one?
   df.replace('..',0, inplace=True)
 
   return df;
 
-def population_evolution(df):
+def population_growth(df):
+  total = 0
   for key in df.keys():
     print key, numpy.array(df[key]).astype('int').sum()
 
 def population_growing(df, interval):
-  first_year = int(df.keys()[0].split(' ')[0])
-  last_year = int(df.keys()[-1].split(' ')[0])
+  first_year = int(df.keys()[-1].split(' ')[0])
+  last_year = int(df.keys()[0].split(' ')[0])
 
   countries = {}
   for country in df.index:
@@ -65,12 +66,18 @@ def population_growing(df, interval):
 
 
 if __name__ == "__main__":
+  MIN_POPULATION = 1000000
   df_population = wrangling(FILENAME)
-  population_evolution(df_population)
-  df_grow = population_growing(df_population, 1)
+
+#  population_growth(df_population)
+  df_grow_countries = population_growing(df_population, 10)
+
+  filtered =  df_grow_countries[df_grow_countries['start_population'] > MIN_POPULATION].sort_values(['grow'], ascending=False)
+
+  print filtered.head(n=10).round(decimals=2)[['start_population','end_population', 'year', 'grow']]
+
+  print filtered.tail(n=10).round(decimals=2)[['start_population','end_population', 'year', 'grow']]
+
+  print filtered.loc['Spain']
   
-  print df_grow[df_grow['start_population'] > 1000000].sort_values(['grow'], ascending=False)
-
-
-
 # TODO: remove not classified
