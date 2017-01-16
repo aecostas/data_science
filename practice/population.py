@@ -34,8 +34,11 @@ def population_growth(df):
     print key, numpy.array(df[key]).astype('int').sum()
 
 def population_growing(df, interval):
-  first_year = int(df.keys()[-1].split(' ')[0])
-  last_year = int(df.keys()[0].split(' ')[0])
+  keys = numpy.array(df.keys())
+  keys = numpy.sort(keys)
+
+  first_year = int(keys[0].split(' ')[0])
+  last_year = int(keys[-1].split(' ')[0])
 
   countries = {}
   for country in df.index:
@@ -73,9 +76,5 @@ if __name__ == "__main__":
   filtered =  df_grow_countries[df_grow_countries['start_population'] > MIN_POPULATION].sort_values(['grow'], ascending=False)
 
   print filtered.head(n=10).round(decimals=2)[['start_population','end_population', 'year', 'grow']]
-
   print filtered.tail(n=10).round(decimals=2)[['start_population','end_population', 'year', 'grow']]
-
-  print filtered.loc['Spain']
   
-# TODO: remove not classified
