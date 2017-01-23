@@ -10,13 +10,13 @@ def mann_whitney_plus_means(turnstile_weather):
     
     You will want to take the means and run the Mann Whitney U-test on the 
     ENTRIESn_hourly column in the turnstile_weather dataframe.
-    
+
     This function should return:
         1) the mean of entries with rain
         2) the mean of entries without rain
         3) the Mann-Whitney U-statistic and p-value comparing the number of entries
            with rain and the number of entries without rain
-    
+
     You should feel free to use scipy's Mann-Whitney implementation, and you 
     might also find it useful to use numpy's mean function.
     
