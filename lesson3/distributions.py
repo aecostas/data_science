@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from decimal import Decimal
 import numpy as np
 import pylab
 from scipy import stats
@@ -65,9 +66,8 @@ def shapiro_study(mu, sigma, iterations, trials):
     shapiro_W = []
     shapiro_p = []
     normal = np.random.normal(mu, sigma, 1000)
-    
+
     for i in range(iterations):
-        tmp_trials = []
         tmp_W = []
         tmp_p = []
         for trial in range(trials):
@@ -94,37 +94,59 @@ def noisy_normal(mu, sigma):
     # Noisy normal distribution
     #
     trials = 10
-    normal = np.random.normal(mu, sigma, 1000)
+    normal = {}
+    normal['data'] = np.random.normal(mu, sigma, 1000)
+    normal['shapiro'] = stats.shapiro(normal['data'])
 
-    normal_noisy_1 = [x + np.random.uniform(low=-0.5, high=0.5) for x in normal]
-    normal_noisy_2 = [x + np.random.uniform(low=-1, high=1) for x in normal]
-    normal_noisy_3 = [x + np.random.uniform(low=-1.5, high=1.5) for x in normal]
+    normal_noisy_1 = {}
+    normal_noisy_1['data'] = [x + np.random.uniform(low=-0.5, high=0.5) for x in normal['data']]
+    normal_noisy_1['shapiro'] = stats.shapiro(normal_noisy_1['data'])
 
-    # normality tests
-    print stats.shapiro(normal)
-    print stats.shapiro(normal_noisy_1)
-    print stats.shapiro(normal_noisy_2)
-    print stats.shapiro(normal_noisy_3)
+    normal_noisy_2 = {}
+    normal_noisy_2['data'] = [x + np.random.uniform(low=-1, high=1) for x in normal['data']]
+    normal_noisy_2['shapiro'] = stats.shapiro(normal_noisy_2['data'])
+    
+    normal_noisy_3 = {}
+    normal_noisy_3['data'] = [x + np.random.uniform(low=-1.5, high=1.5) for x in normal['data']]
+    normal_noisy_3['shapiro'] = stats.shapiro(normal_noisy_3['data'])
 
     fig = plt.figure()
     ax1 = fig.add_subplot(221)
-    stats.probplot(normal, dist="norm", plot=pylab)
+    stats.probplot(normal['data'], dist="norm", plot=pylab)
+    ax1.set_title("")
+    ax1.text(0.5,
+             0.1,
+             "(%.3f, %.2E)" % (normal['shapiro'][0], Decimal(normal['shapiro'][1])),
+             transform=ax1.transAxes)
 
     ax2 = fig.add_subplot(222)
-    stats.probplot(normal_noisy_1, dist="norm", plot=pylab)
+    stats.probplot(normal_noisy_1['data'], dist="norm", plot=pylab)
+    ax2.set_title("")
+    ax2.text(0.5,
+             0.1,
+             "(%.3f, %.2E)" % (normal_noisy_1['shapiro'][0], Decimal(normal_noisy_1['shapiro'][1])),
+             transform=ax2.transAxes)
 
-    ax3 = fig.add_subplot(223)    
-    stats.probplot(normal_noisy_2, dist="norm", plot=pylab)
+    ax3 = fig.add_subplot(223)
+    stats.probplot(normal_noisy_2['data'], dist="norm", plot=pylab)
+    ax3.text(0.5,
+             0.1,
+             "(%.3f, %.2E)" % (normal_noisy_2['shapiro'][0], Decimal(normal_noisy_2['shapiro'][1])),
+             transform=ax3.transAxes)
+    ax3.set_title("")
 
     ax4 = fig.add_subplot(224)
-    stats.probplot(normal_noisy_3, dist="norm", plot=pylab)
+    stats.probplot(normal_noisy_3['data'], dist="norm", plot=pylab)
+    ax4.text(0.5,
+             0.1,
+             "(%.3f, %.2E)" % (normal_noisy_3['shapiro'][0], Decimal(normal_noisy_3['shapiro'][1])),
+             transform=ax4.transAxes)
+    ax4.set_title("")
+
+    pylab.suptitle("Probability plot")
     
     pylab.show()
 
-
-    
-
-        
 
 # exit(0)
 
@@ -178,7 +200,7 @@ def noisy_normal(mu, sigma):
 # TODO: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.anderson.html#scipy.stats.anderson
 
 if __name__ == "__main__":
-#    noisy_normal(0, 0.2)
-    shapiro_study(0, 0.2, 50, 100)
+    noisy_normal(0, 0.2)
+#    shapiro_study(0, 0.2, 50, 100)
 
    
