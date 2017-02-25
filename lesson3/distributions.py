@@ -59,8 +59,78 @@ def normal_sum():
     plt.show()
     print stats.shapiro(data)
 
+def central_limit_theorem(iterations):
+    samples = 1000;
+    values = np.zeros(samples);
 
-def shapiro_study(mu, sigma, iterations, trials):
+    # for i in range(iterations):
+    #     values += np.random.uniform(low=-1, high=1, size=samples)
+    #     print stats.shapiro(values)
+
+    reference = np.random.poisson(2, samples)
+    count, bins, ignored = plt.hist(reference, 100, normed=True)
+    plt.show()
+
+    shapiro_W = []
+    shapiro_p = []
+
+    for i in range(iterations):
+        values += np.random.poisson(2, samples)
+        shapiro_test = stats.shapiro(values)
+        shapiro_W.append(shapiro_test[0])
+        shapiro_p.append(shapiro_test[1])
+
+    count, bins, ignored = plt.hist(values, 100, normed=True)
+    plt.show()
+
+    # P-Value trendline
+    x = range(iterations)
+    y = shapiro_p
+    z = np.polyfit(x, y, 1)
+    p = np.poly1d(z)
+    fig = pylab.plot(x,p(x),'r--')
+
+    plt.plot(y, 'ro')
+    plt.title('Shapiro-Wilk test for central limit theorem evaluation')
+    plt.ylabel('p-value')
+    plt.xlabel('Number of random variables added')
+    plt.show();
+#    plt.savefig(filename+'_p.png', facecolor='#BABABA' , edgecolor='none', dpi=1200)
+
+    
+    
+def summary_of_distributions():
+    samples = 1000
+
+    mu = 0
+    sigma = 0.5
+    normal = np.random.normal(mu, sigma, samples)
+
+    poisson = np.random.poisson(2, samples)
+
+    n, p = 10, .5  # number of trials, probability of each trial
+    binomial = np.random.binomial(n, p, 1000)
+
+    fig, axarr = plt.subplots(1, 3)
+
+    axarr[0].hist(normal, 30, normed=True)
+    axarr[1].hist(poisson, 30, normed=True)
+    axarr[2].hist(binomial, 30, normed=True)
+    plt.show()
+
+
+def shapiro_trials(trials, values):
+    tmp_W = []
+    tmp_p = []
+
+    for trial in range(trials):
+        shapiro_test = stats.shapiro(values)
+        tmp_W.append(shapiro_test[0])
+        tmp_p.append(shapiro_test[1])
+
+    return np.array(tmp_W).mean(), np.array(tmp_p).mean()
+
+def shapiro_study(mu, sigma, iterations, trials, filename):
     normal_noisy = []
     scale = 0.01
     shapiro_W = []
@@ -68,34 +138,44 @@ def shapiro_study(mu, sigma, iterations, trials):
     normal = np.random.normal(mu, sigma, 1000)
 
     for i in range(iterations):
-        tmp_W = []
-        tmp_p = []
-        for trial in range(trials):
-            normal_noisy = [x + np.random.uniform(low=-scale*i, high=scale*i) for x in normal]
-            shapiro_test = stats.shapiro(normal_noisy)
-            tmp_W.append(shapiro_test[0])
-            tmp_p.append(shapiro_test[1])
-        shapiro_W.append(np.array(tmp_W).mean())
-        shapiro_p.append(np.array(tmp_p).mean())
+        normal_noisy = [x + np.random.uniform(low=-scale*i, high=scale*i) for x in normal]
+        W, p = shapiro_trials(trials, normal_noisy)
 
-    # trendline
+        shapiro_W.append(W)
+        shapiro_p.append(p)
+
+    # P-Value trendline
     x = range(iterations)
     y = shapiro_p
     z = np.polyfit(x, y, 1)
     p = np.poly1d(z)
-    pylab.plot(x,p(x),'r--')
+    fig = pylab.plot(x,p(x),'r--')
 
     plt.plot(y, 'ro')
-    plt.show()
+    plt.title('Shapiro-Wilk tests from normal to uniform')
+    plt.ylabel('p-value')
+    plt.xlabel('Noise')
+    plt.savefig(filename+'_p.png', facecolor='#BABABA' , edgecolor='none', dpi=1200)
+
+    plt.clf()
+    y = shapiro_W
+    z = np.polyfit(x, y, 1)
+    p = np.poly1d(z)
+    fig = pylab.plot(x,p(x),'r--')
+
+    plt.plot(y, 'ro')
+    plt.title('Shapiro-Wilk tests from normal to uniform')
+    plt.ylabel('W')
+    plt.xlabel('Noise')
+    plt.savefig(filename+'_W.png', facecolor='#BABABA' , edgecolor='none', dpi=1200)
 
 
-def normality_plot_comparison(mu, sigma, iterations):
-    trials = 10
+def normality_plot_comparison(mu, sigma, iterations, filename):
     normal_noisy = []
     shift = 0.5
     normal_sample = np.random.normal(mu, sigma, 1000)
     fig, axarr = plt.subplots(iterations,2)
-    
+
     for i in range(iterations):
         normal = {}
         normal['data'] = [x + np.random.uniform(low=-shift*i, high=shift*i) for x in normal_sample]
@@ -105,19 +185,20 @@ def normality_plot_comparison(mu, sigma, iterations):
         stats.probplot(normal['data'], dist="norm", plot=axarr[i,1])
         axarr[i,0].set_title("")
         axarr[i,1].set_title("")
-        axarr[i,1].text(0.5,
+        axarr[i,1].set_ylabel("")
+        axarr[i,0].tick_params(axis='both', which='major', labelsize=9)
+        axarr[i,1].tick_params(axis='both', which='major', labelsize=9)
+
+        axarr[i,1].text(0.55,
                         0.1,
                         "(%.3f, %.2E)" % (normal['shapiro'][0], Decimal(normal['shapiro'][1])),
+                        fontsize=9,
                         transform=axarr[i,1].transAxes)
-        axarr[i,0].hist(normal['data'], 30, normed=True) 
+        axarr[i,0].hist(normal['data'], 30, normed=True)
+
     pylab.suptitle("Normal probability plot")
-    pylab.show()
+    pylab.savefig(filename,facecolor=fig.get_facecolor(), edgecolor='none', dpi=1200)
 
-
-        
-
-
-# exit(0)
 
 
 
@@ -167,8 +248,8 @@ def normality_plot_comparison(mu, sigma, iterations):
 # TODO: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.anderson.html#scipy.stats.anderson
 
 if __name__ == "__main__":
-    normality_plot_comparison(0, 0.2, 4)
-#    noisy_normal(0, 0.2)
-#    shapiro_study(0, 0.2, 50, 100)
-
+#    normality_plot_comparison(0, 0.2, 4, "normality_plots.png")
+#    central_limit_theorem(50)
+    shapiro_study(0, 0.2, 50, 100, "shapiro")
+#    summary_of_distributions()
    
